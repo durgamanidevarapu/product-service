@@ -67,7 +67,6 @@ public class ProductServiceImpl  implements ProductService{
     }
 
 
-
     @Override
     public void deleteProduct(long id) {
         log.info("deleting product with id:{}",id);
