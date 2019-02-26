@@ -1,4 +1,4 @@
-package com.product.ProductService;
+package com.product.application;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
