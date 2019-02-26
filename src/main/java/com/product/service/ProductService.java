@@ -14,6 +14,5 @@ public interface ProductService {
     public List<Product> getProducts();
     public Product getProductById(long id);
     public Optional<Product> findProductById(long id);
-    //public void deleteProduct(String productName);
     public void deleteProduct(long id);
 }
