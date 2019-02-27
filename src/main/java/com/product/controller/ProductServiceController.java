@@ -1,5 +1,6 @@
 package com.product.controller;
 
+import com.product.Exception.ProductNotFoundException;
 import com.product.domain.Product;
 import com.product.service.ProductService;
 import org.slf4j.Logger;
@@ -38,7 +39,7 @@ public class ProductServiceController {
 
 
 
-    @RequestMapping(value="/get/products/", method= RequestMethod.GET)
+    /*@RequestMapping(value="/get/products/", method= RequestMethod.GET)
     public  List<Product>  getProductDetails(){
 
         log.info("getting product details");
@@ -47,15 +48,20 @@ public class ProductServiceController {
 
         return productList;
 
-    }
+    }*/
 
-    @RequestMapping(value="/product/{id}", method= RequestMethod.GET)
+    @GetMapping(value="/product/{id}")
     public Product  getProductDetails(@PathVariable long id){
 
         log.info("getting product details");
 
-        Product product = productService.getProductById(id);
-        return product;
+        Optional<Product> productOptional = productService.findProductById(id);
+        if (!productOptional.isPresent()) {
+            log.info("no data present");
+            throw new ProductNotFoundException("id-" + id + "is not available");
+        }
+
+        return (productOptional.get());
 
     }
 
@@ -65,7 +71,7 @@ public class ProductServiceController {
         Optional<Product> productOptional = productService.findProductById(id);
         if (!productOptional.isPresent())
             return ResponseEntity.notFound().build();
-        productService.getProductById(id);
+
 
         product.setId(id);
 

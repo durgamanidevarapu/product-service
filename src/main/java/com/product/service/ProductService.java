@@ -12,7 +12,7 @@ public interface ProductService {
     public Product saveProduct(Product product);
     public void addAllProducts(List<Product> productList);
     public List<Product> getProducts();
-    public Product getProductById(long id);
+    //public Product getProductById(long id);
     public Optional<Product> findProductById(long id);
     public void deleteProduct(long id);
 }

@@ -56,7 +56,7 @@ public class ProductServiceImpl  implements ProductService{
         return productServiceDao.findById(id);
     }
 
-    @Override
+   /* @Override
     public Product getProductById(long id) {
         Optional<Product> product = productServiceDao.findById(id);
         if(!product.isPresent()){
@@ -64,7 +64,7 @@ public class ProductServiceImpl  implements ProductService{
             throw new ProductNotFoundException("id-"+id+"is not available");
         }
             return product.get();
-    }
+    }*/
 
 
     @Override
