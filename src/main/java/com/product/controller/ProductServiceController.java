@@ -98,10 +98,6 @@ public class ProductServiceController {
         }
     }*/
 
-      /*@RequestMapping(value="/store/product", method= RequestMethod.POST,consumes = "application/json")
-    public  void   productService(@RequestBody Product product) {
-        log.info("product data:{}",product,this);
-        productService.addProduct(product);
-    }*/
+
 
 }
