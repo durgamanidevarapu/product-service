@@ -38,7 +38,7 @@ public class ProductServiceController {
 
 
 
-    @RequestMapping(value="/get/products/", method= RequestMethod.GET)
+    /*@RequestMapping(value="/get/products/", method= RequestMethod.GET)
     public  List<Product>  getProductDetails(){
 
         log.info("getting product details");
@@ -47,9 +47,9 @@ public class ProductServiceController {
 
         return productList;
 
-    }
+    }*/
 
-    @RequestMapping(value="/product/{id}", method= RequestMethod.GET)
+    @GetMapping(value="/product/{id}")
     public Product  getProductDetails(@PathVariable long id){
 
         log.info("getting product details");
