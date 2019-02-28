@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductServiceDao extends CrudRepository<Product, Long> {
 
-    public Product findAllByName(String name);
+
 
 
 }

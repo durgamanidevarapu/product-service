@@ -20,6 +20,10 @@ public class Product {
         this.name=name;
         this.description=desc;
     }
+
+    public Product(){
+
+    }
     public Long getId() {
         return id;
     }
