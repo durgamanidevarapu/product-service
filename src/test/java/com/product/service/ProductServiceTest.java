@@ -34,6 +34,7 @@ public class ProductServiceTest {
     public void testaddProduct(){
 
         when(productServiceDaoMock.save(product)).thenReturn(product);
+        productService.addProduct(product);
     }
 
     @Test

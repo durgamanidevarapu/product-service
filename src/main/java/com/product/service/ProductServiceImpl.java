@@ -29,7 +29,6 @@ public class ProductServiceImpl implements ProductService {
         log.info("calling repository to store product info");
         productServiceDao.save(product);
     }
-
     @Override
     public void addAllProducts(List<Product> productList) {
         log.info("calling repository to store product info");
@@ -44,12 +43,10 @@ public class ProductServiceImpl implements ProductService {
         iterator.forEach(productList::add);
         return productList;
     }
-
     @Override
     public Optional<Product> findProductById(long id) {
         return productServiceDao.findById(id);
     }
-
 
     @Override
     public void deleteProduct(long id) {
@@ -57,8 +54,4 @@ public class ProductServiceImpl implements ProductService {
         productServiceDao.deleteById(id);
     }
 
-    public void updateProduct(Product product) {
-        log.info("calling repository to store product info");
-        //productServiceDao.(product);
-    }
 }
