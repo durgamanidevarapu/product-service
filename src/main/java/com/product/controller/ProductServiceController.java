@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -83,11 +84,14 @@ public class ProductServiceController {
     public ResponseEntity<Object> addProductReeview(@RequestBody ReviewDto reviewDto, @PathVariable int id) {
         RestTemplate restTemplate = new RestTemplate();
         String uri = "http://localhost:8086/products/{productId}/reviews";
-        Map<String,String> params = new HashMap<String,String>();
+        Map<String,String> params = new HashMap<>();
         params.put("productId","1");
 
         HttpEntity<ReviewDto> request = new HttpEntity<>(reviewDto);
-        ResponseEntity<Object> responseEntity1 = restTemplate.exchange(uri,HttpMethod.POST,request,Object.class,params);
+        ResponseEntity<Object> responseEntity = restTemplate.exchange(uri,HttpMethod.POST,request,Object.class,params);
+        if(responseEntity.getStatusCode()!= HttpStatus.CREATED){
+            log.info("unable to add review");
+        }
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(id).toUri();
