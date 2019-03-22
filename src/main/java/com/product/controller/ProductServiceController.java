@@ -20,15 +20,16 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 public class ProductServiceController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    RestTemplate restTemplate;
 
     @Bean
     public ModelMapper modelMapper() {
@@ -49,15 +50,19 @@ public class ProductServiceController {
 
 
     @GetMapping(value = "/product/{id}")
-    public ProductDto getProductDetails(@PathVariable long id) {
+    public Map<String, Object> getProductDetails(@PathVariable long id) {
 
         log.info("getting product details");
         Optional<Product> productOptional = productService.findProductById(id);
+        Map<String, Object> result = new HashMap<>();
         if (!productOptional.isPresent()) {
             log.info("no data present");
             throw new ProductNotFoundException("id-" + id + "is not available");
         }
-        return convertToDto(productOptional.get());
+        result.put("productDetails", convertToDto(productOptional.get()));
+        List<ReviewDto> reviewDtoList = getReviewDetails(id);
+        result.put("reviews", reviewDtoList);
+        return result;
     }
 
     @PutMapping("/products/{id}")
@@ -67,7 +72,7 @@ public class ProductServiceController {
         if (!productOptional.isPresent())
             return ResponseEntity.notFound().build();
 
-        Product product = updateProductEntity(productDto,productOptional.get());
+        Product product = updateProductEntity(productDto, productOptional.get());
 
         productService.addProduct(product);
         return ResponseEntity.noContent().build();
@@ -80,22 +85,53 @@ public class ProductServiceController {
         productService.deleteProduct(id);
     }
 
-    @PostMapping(value="/product/reviews/{id}")
-    public ResponseEntity<Object> addProductReeview(@RequestBody ReviewDto reviewDto, @PathVariable int id) {
-        RestTemplate restTemplate = new RestTemplate();
+    @PostMapping(value = "/product/reviews/{id}")
+    public ResponseEntity<Object> addProductReview(@RequestBody ReviewDto reviewDto, @PathVariable int id) {
+
         String uri = "http://localhost:8086/products/{productId}/reviews";
-        Map<String,String> params = new HashMap<>();
-        params.put("productId","1");
+        Map<String, String> params = new HashMap<>();
+        params.put("productId", "1");
 
         HttpEntity<ReviewDto> request = new HttpEntity<>(reviewDto);
-        ResponseEntity<Object> responseEntity = restTemplate.exchange(uri,HttpMethod.POST,request,Object.class,params);
-        if(responseEntity.getStatusCode()!= HttpStatus.CREATED){
+        ResponseEntity<Object> responseEntity = restTemplate.exchange(uri, HttpMethod.POST, request, Object.class, params);
+        if (responseEntity.getStatusCode() != HttpStatus.CREATED) {
             log.info("unable to add review");
         }
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(id).toUri();
         return ResponseEntity.created(location).build();
+    }
+
+
+    private Product updateProductEntity(ProductDto productDto, Product product) {
+
+        Product productEntity = convertToEntity(productDto);
+        productEntity.setId(product.getId());
+        if (StringUtils.isEmpty(productEntity.getName())) {
+            productEntity.setName(product.getName());
+        }
+        if (StringUtils.isEmpty(product.getDescription())) {
+            productEntity.setName(product.getDescription());
+        }
+        return productEntity;
+    }
+
+    private List<ReviewDto> getReviewDetails(long productId) {
+        List<ReviewDto> reviewDtoList = new ArrayList<>();
+        String uri = "http://localhost:8086/{productId}/reviews";
+        Map<String, String> params = new HashMap<>();
+        params.put("productId", "1");
+
+
+        ResponseEntity<Object> responseEntity = restTemplate.exchange(uri, HttpMethod.GET, null, Object.class, params);
+        if (responseEntity.getStatusCode() != HttpStatus.OK) {
+            log.info("unable to add review");
+        } else {
+            reviewDtoList = (List<ReviewDto>) responseEntity.getBody();
+        }
+
+        return reviewDtoList;
     }
 
     private ProductDto convertToDto(Product product) {
@@ -105,21 +141,6 @@ public class ProductServiceController {
     private Product convertToEntity(ProductDto productDto) {
         return modelMapper().map(productDto, Product.class);
     }
-
-    private Product updateProductEntity(ProductDto productDto,Product product){
-
-        Product productEntity = convertToEntity(productDto);
-        productEntity.setId(product.getId());
-        if(StringUtils.isEmpty(productEntity.getName())){
-            productEntity.setName(product.getName());
-        }
-        if(StringUtils.isEmpty(product.getDescription())){
-            productEntity.setName(product.getDescription());
-        }
-        return productEntity;
-    }
-
-
 }
 
 
