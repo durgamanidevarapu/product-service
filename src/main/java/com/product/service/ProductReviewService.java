@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface ProductReviewService {
-    public ResponseEntity<Object> addReview(ReviewDto reviewDto);
-    public List<ReviewDto> getProductReviews(long productId);
+    public ResponseEntity<Object> addReview(ReviewDto reviewDto,Long productId);
+    public List<ReviewDto> getProductReviews(Long productId);
 
 }

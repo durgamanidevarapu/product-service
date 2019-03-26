@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -22,7 +21,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 public class ProductServiceController {
@@ -33,12 +34,6 @@ public class ProductServiceController {
     @Autowired
     private ProductReviewService productReviewService;
 
-    @Autowired
-    EurekaClient eurekaClient;
-
-    @Autowired
-    RestTemplate restTemplate;
-
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
@@ -46,13 +41,7 @@ public class ProductServiceController {
 
     Logger log = LoggerFactory.getLogger(ProductServiceController.class);
 
-    private String SERVICE_NAME="REVIEW-SERVICE";
 
-
-    private String getServiceUrl() {
-        InstanceInfo instance = eurekaClient.getNextServerFromEureka(SERVICE_NAME, false);
-        return instance.getHomePageUrl();
-    }
     @PostMapping("/products")
     public ResponseEntity<Object> createProduct(@RequestBody ProductDto productDto) {
 
@@ -75,7 +64,6 @@ public class ProductServiceController {
             throw new ProductNotFoundException("id-" + id + "is not available");
         }
         result.put("productDetails", convertToDto(productOptional.get()));
-        List<ReviewDto> reviewDtoList = getReviewDetails(id);
         result.put("reviews", productReviewService.getProductReviews(id));
         return result;
     }
@@ -101,9 +89,8 @@ public class ProductServiceController {
     }
 
     @PostMapping(value = "/product/reviews/{id}")
-    public ResponseEntity<Object> addProductReview(@RequestBody ReviewDto reviewDto, @PathVariable int id) {
-
-        ResponseEntity<Object> responseEntity = productReviewService.addReview(reviewDto);
+    public ResponseEntity<Object> addProductReview(@RequestBody ReviewDto reviewDto, @PathVariable Long id) {
+        ResponseEntity<Object> responseEntity = productReviewService.addReview(reviewDto,id);
         if (responseEntity.getStatusCode() != HttpStatus.CREATED) {
             log.info("unable to add review");
         }
@@ -125,21 +112,6 @@ public class ProductServiceController {
             productEntity.setName(product.getDescription());
         }
         return productEntity;
-    }
-
-    private List<ReviewDto> getReviewDetails(long productId) {
-        List<ReviewDto> reviewDtoList = new ArrayList<>();
-        String uri = getServiceUrl()+"/{productId}/reviews";
-        Map<String, String> params = new HashMap<>();
-        params.put("productId", "1");
-        ResponseEntity<Object> responseEntity = restTemplate.exchange(uri, HttpMethod.GET, null, Object.class, params);
-        if (responseEntity.getStatusCode() != HttpStatus.OK) {
-            log.info("unable to add review");
-        } else {
-            reviewDtoList = (List<ReviewDto>) responseEntity.getBody();
-        }
-
-        return reviewDtoList;
     }
 
     private ProductDto convertToDto(Product product) {

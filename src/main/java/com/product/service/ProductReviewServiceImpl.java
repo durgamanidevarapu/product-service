@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service(value="productReviewService")
-public class ReviewServiceImpl implements ProductReviewService {
+public class ProductReviewServiceImpl implements ProductReviewService {
 
     @Autowired
     private RestTemplate restTemplate;
@@ -27,19 +27,15 @@ public class ReviewServiceImpl implements ProductReviewService {
     private String SERVICE_NAME="REVIEW-SERVICE";
 
     @Override
-    public ResponseEntity<Object> addReview(ReviewDto reviewDto) {
-        String uri = getServiceUrl()+"/products/{productId}/reviews";
-        Map<String, String> params = new HashMap<>();
-        params.put("productId", "1");
+    public ResponseEntity<Object> addReview(ReviewDto reviewDto,Long productId) {
+        String uri = getServiceUrl()+"/products/"+productId+"/reviews";
         HttpEntity<ReviewDto> request = new HttpEntity<>(reviewDto);
-        return restTemplate.exchange(uri, HttpMethod.POST, request, Object.class, params);
+        return restTemplate.exchange(uri, HttpMethod.POST, request, Object.class);
     }
 
     @Override
-    public List<ReviewDto> getProductReviews(long productId) {
-        String uri = getServiceUrl()+"/{productId}/reviews";
-        Map<String, Long> params = new HashMap<>();
-        params.put("productId", productId);
+    public List<ReviewDto> getProductReviews(Long productId) {
+        String uri = getServiceUrl()+productId+"/reviews";
         return restTemplate.exchange(uri,HttpMethod.GET,null,
                 new ParameterizedTypeReference<List<ReviewDto>>() {
                 }).getBody();
