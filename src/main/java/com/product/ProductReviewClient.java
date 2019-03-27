@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient(name="REVIEW-SERVICE")
+@FeignClient(name="REVIEW-SERVICE", fallback = ProductReviewFallback.class)
 public interface ProductReviewClient {
 
     @GetMapping(value="/{productId}/reviews")
