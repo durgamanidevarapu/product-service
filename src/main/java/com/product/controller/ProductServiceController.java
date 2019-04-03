@@ -29,14 +29,14 @@ public class ProductServiceController {
     private ProductService productService;
 
     @Autowired
-    RestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
     @Bean
-    public ModelMapper modelMapper() {
+    private ModelMapper modelMapper() {
         return new ModelMapper();
     }
 
-    Logger log = LoggerFactory.getLogger(ProductServiceController.class);
+    private Logger log = LoggerFactory.getLogger(ProductServiceController.class);
 
     @PostMapping("/products")
     public ResponseEntity<Object> createProduct(@RequestBody ProductDto productDto) {
@@ -105,15 +105,14 @@ public class ProductServiceController {
 
 
     private Product updateProductEntity(ProductDto productDto, Product product) {
-
+        if (StringUtils.isEmpty(productDto.getName())) {
+            productDto.setName(product.getName());
+        }
+        if (StringUtils.isEmpty(productDto.getDescription())) {
+            productDto.setName(product.getDescription());
+        }
         Product productEntity = convertToEntity(productDto);
         productEntity.setId(product.getId());
-        if (StringUtils.isEmpty(productEntity.getName())) {
-            productEntity.setName(product.getName());
-        }
-        if (StringUtils.isEmpty(product.getDescription())) {
-            productEntity.setName(product.getDescription());
-        }
         return productEntity;
     }
 
