@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient(name="REVIEW-SERVICE", fallback = ProductReviewFallback.class)
+@FeignClient(name="NETFLIX-ZUUL-API-GATEWAY", fallback = ProductReviewFallback.class)
 public interface ProductReviewClient {
 
-    @GetMapping(value="/{productId}/reviews")
+    @GetMapping(value="/api/product-review/{productId}/reviews")
     List<ReviewDto> getProductReviews(@PathVariable(value="productId") Long productId);
 
-    @PostMapping(value="/products/{productId}/reviews")
+    @PostMapping(value="/api/product-review/products/{productId}/reviews")
     ResponseEntity<Object> addProductReview(@RequestBody ReviewDto reviewDto, @PathVariable(value="productId") Long productId);
 
 }
