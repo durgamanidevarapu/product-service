@@ -1,18 +1,13 @@
 package com.product.service;
 
 import com.product.Exception.ProductNotFoundException;
-import com.product.controller.LogUtil;
 import com.product.dao.ProductServiceDao;
 import com.product.domain.Product;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,17 +18,11 @@ public class ProductServiceImpl  implements ProductService{
     @Autowired
     ProductServiceDao productServiceDao;
 
-    Logger log=  LogUtil.getLog(this);
+    Logger log=  LoggerFactory.getLogger(ProductServiceImpl.class);
 
     @Override
-    public Product saveProduct(Product product) {
+    public Product addProduct(Product product) {
         return productServiceDao.save(product);
-    }
-
-    @Override
-    public void addProduct(Product product) {
-       log.info("calling repository to store product info");
-        productServiceDao.save(product);
     }
 
     @Override
@@ -63,7 +52,7 @@ public class ProductServiceImpl  implements ProductService{
             log.info("no data present");
             throw new ProductNotFoundException("id-"+id+"is not available");
         }
-            return product.get();
+        return product.get();
     }
 
 
