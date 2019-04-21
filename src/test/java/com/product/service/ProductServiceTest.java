@@ -27,7 +27,7 @@ public class ProductServiceTest {
     public void testsaveProduct(){
 
         when(productServiceDaoMock.save(product)).thenReturn(product);
-       assertEquals(product,productService.saveProduct(product));
+       assertEquals(product,productService.addProduct(product));
     }
 
     @Test
