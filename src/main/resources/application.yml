@@ -1,6 +1,9 @@
 spring:
   application:
     name: product-service
+  sleuth:
+    sampler:
+      probability: 1.0
   h2:
     console:
       enabled: true
