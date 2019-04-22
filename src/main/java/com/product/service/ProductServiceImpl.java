@@ -1,9 +1,9 @@
 package com.product.service;
 
-import com.product.controller.LogUtil;
 import com.product.dao.ProductServiceDao;
 import com.product.domain.Product;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     ProductServiceDao productServiceDao;
 
-    Logger log = LogUtil.getLog(this);
+    Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
 
     @Override
     public Product saveProduct(Product product) {
@@ -29,7 +29,6 @@ public class ProductServiceImpl implements ProductService {
         log.info("calling repository to store product info");
         productServiceDao.save(product);
     }
-
     @Override
     public void addAllProducts(List<Product> productList) {
         log.info("calling repository to store product info");
@@ -44,18 +43,15 @@ public class ProductServiceImpl implements ProductService {
         iterator.forEach(productList::add);
         return productList;
     }
-
     @Override
     public Optional<Product> findProductById(long id) {
         return productServiceDao.findById(id);
     }
-
 
     @Override
     public void deleteProduct(long id) {
         log.info("deleting product with id:{}", id);
         productServiceDao.deleteById(id);
     }
-
 
 }
