@@ -1,0 +1,27 @@
+version: '3'
+services:
+
+  web:
+    container_name: productsvc
+    image: product-service:001
+    ports:
+      - 8091:8091
+    environment:
+      EUREKA_PORT: 8761
+      EUREKA_SERVER: http://discovery:8761/eureka/
+    depends_on:
+      - discovery
+    networks:
+      - product-service-ntwk
+    restart: always
+  discovery:
+    container_name: eureka
+    hostname: eureka
+    image: eureka-server:001
+    ports:
+      - 8761:8761
+    networks:
+      - product-service-ntwk
+    restart: always
+networks:
+  product-service-ntwk:
